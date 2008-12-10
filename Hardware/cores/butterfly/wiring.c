@@ -56,7 +56,7 @@ void delay(unsigned long ms)
 {
 	unsigned long start = millis();
 	
-	while (millis() - start < ms)
+	while (millis() - start <= ms)
 		;
 }
 
@@ -154,7 +154,8 @@ void init()
 {
     // Set up the clock prescale first
     CLKPR_Calibrate();
-    // Then calibrate the RC clock 
+    // Then trim the RC oscillator to get as close to the 
+    // requested clock frequency as possible. 
     OSCCAL_Calibrate();
     
 	// this needs to be called before setup() or some functions won't
