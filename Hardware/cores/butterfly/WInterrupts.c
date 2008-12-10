@@ -66,13 +66,14 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
 
 void detachInterrupt(uint8_t interruptNum) {
   if(interruptNum < EXTERNAL_NUM_INTERRUPTS) {
-    if (interruptNum == 0)
-      // Disable the interrupt.
-      GICR &= ~(1 << INT0);
-    else
+	if (interruptNum == 0) {
+		// Disable the interrupt.
+		GICR &= ~(1 << INT0);
+	} else {
 #ifndef __AVR_ATmega169__  // remove this for the butterfly NAL2008
-      GICR &= ~(1 << INT1);
+		GICR &= ~(1 << INT1);
 #endif
+	}
 	  
     intFunc[interruptNum] = 0;
   }
