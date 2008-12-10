@@ -11,7 +11,7 @@ Atmel is of course a great reference for Atmel products.
   * [http://www.atmel.com/dyn/products/product_card.asp?part_id=3012 ATMega169 Product Card] including several useful Application Notes.
   * [http://www.atmel.com/dyn/resources/prod_documents/doc2514.pdf The ATMega169 datasheet]
 
-Joe Pardue of [smileymicros.com Smiley Micros] is a valuable Butterfly resource.
+Joe Pardue of [http://smileymicros.com Smiley Micros] is a valuable Butterfly resource.
   * [http://www.smileymicros.com/Quick%20Start%20Guide%20-%20The%20Next%20Generation.pdf?&MMN_position=106:106 Quick Start Guide - The Next Generation] is a great introduction to the AVR Butterfly, a great start for a beginner and worth the read even if you are not.
   * [http://www.smileymicros.com/download/Butterfly%20Alternate%20Pin%20Uses.pdf?&MMN_position=62:62 Butterfly Alternate Pin Uses] Documentation of what the Butterfly's CPU's pins are connected to and Joe's notes about what you can and can't do with them.
 
