@@ -1,6 +1,8 @@
 #include "butterfly_temp.h"
 #include "WProgram.h"
 #include "wiring.h"
+#include <avr/pgmspace.h>
+
 
 TempSensor::TempSensor(int units)
 {
@@ -42,7 +44,7 @@ int TempSensor::getTemp(int units)
 int TempSensor::mapToF(int a2d)
 {
   // This table is from the AVR Butterfly sample from ATMEL
-  int TEMP_Fahrenheit_pos[] =  
+  prog_uint16_t TEMP_Fahrenheit_pos[] PROGMEM =  
   { // Positive Fahrenheit temps (ADC-value) for 0 to 140 degrees F  
 	938, 935, 932, 929, 926, 923, 920, 916, 913, 909, 906, 902, 898, 
 	894, 891, 887, 882, 878, 874, 870, 865, 861, 856, 851, 847, 842, 
@@ -59,7 +61,7 @@ int TempSensor::mapToF(int a2d)
   
   int i;
   for (i=0; i<=141; i++){   // Find the temperature
-    if (a2d > TEMP_Fahrenheit_pos[i]){
+    if (a2d > pgm_read_word_near( TEMP_Fahrenheit_pos +i ){
        break;
     }
   }     
@@ -69,7 +71,7 @@ int TempSensor::mapToF(int a2d)
 int TempSensor::mapToC(int a2d)
 {
   // This table is from the AVR Butterfly sample from ATMEL
-  int TEMP_Celsius_pos[] =    
+  prog_uint16_t TEMP_Celsius_pos[] PROGMEM =    
   { // Positive Celsius temps (ADC-value) for 0 to 60 degrees C
     806,796,786,775,765,754,743,732,720,709,697,685,673,661,649,
     636,624,611,599,586,574,562,549,537,524,512,500,488,476,464,
@@ -78,7 +80,7 @@ int TempSensor::mapToC(int a2d)
     187,
   };
 
-  int TEMP_Celsius_neg[] =    
+  prog_uint16_t TEMP_Celsius_neg[] PROGMEM =    
   {  // Negative Celsius temps (ADC-value) from -1 to -15 degrees C
     815,825,834,843,851,860,868,876,883,891,898,904,911,917,923,
   };
@@ -86,7 +88,7 @@ int TempSensor::mapToC(int a2d)
   int v = 0;
   if( a2d > 810){   // If it's a negative temperature
     for (int i=0; i<=25; i++){   // Find the temperature
-      if (a2d <= TEMP_Celsius_neg[i]){
+      if (a2d <= pgm_read_word_near( TEMP_Celsius_neg + i){
         v = 0-i; // Make it negative
         break;
       }
@@ -94,7 +96,7 @@ int TempSensor::mapToC(int a2d)
   } 
   else if ( a2d < 800 ) {  // If it's a positive temperature
     for (int i=0; i<100; i++) {
-      if (a2d >= TEMP_Celsius_pos[i]){
+      if (a2d >= pgm_read_word_near( TEMP_Celsius_pos + i){
         v = i; 
         break;
       }
