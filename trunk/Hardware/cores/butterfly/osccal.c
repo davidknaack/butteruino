@@ -1,4 +1,4 @@
-#include "OSCCal.h"
+#include "osccal.h"
 
 void OSCCAL_Calibrate(void)
 {
