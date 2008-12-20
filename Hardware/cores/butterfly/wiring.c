@@ -202,4 +202,9 @@ void init()
 	// here so they can be used as normal digital i/o; they will be
 	// reconnected in Serial.begin()
 	UCSRB = 0;
+	
+	// The butterfly bootloader leaves PCIE1 set, but unless there
+	// is a handler installed for it, the device will reset on joystick
+	// center or up.
+	cbi( EIMSK, PCIE1 );
 }
