@@ -5,6 +5,15 @@
 #ifndef Pins_Butterfly_h
 #define Pins_Butterfly_h
 
+//  Butterfly with ATMEL ATMEGA8 & 168
+//  See pins_butterfly.h for names that can be used for the pins
+//
+//      Light
+// Volt
+// USART    LCD              Joystick
+// USI
+//      PORTB  JTAG  PORTD     ISP
+
 // *** PORTB ***
 #define PBPIN1 0         // PB Pad 1 PB0(/SS)
 #define PBPIN2 1         // PB Pad 2 PB1(SCK) DataFlash, ISP
