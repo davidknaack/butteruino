@@ -15,10 +15,7 @@
    #include <avr/pgmspace.h>
    #include <avr/interrupt.h>
    #include <stdbool.h>
-   
-   // EXTERNAL VARIABLES:
-   extern volatile uint8_t ScrollFlags;
-   
+
    // DEFINES:
    #define LCD_LCDREGS_START          ((uint8_t*)&LCDDR0)
    #define LCD_SPACE_OR_INVALID_CHAR  0xFF
@@ -35,6 +32,14 @@
    #define LCD_FLAG_SCROLL            (1 << 0)
    #define LCD_FLAG_SCROLL_DONE       (1 << 1)   
 
+class BF_LCD 
+{
+public:
+   BF_LCD( void );
+   
+   // EXTERNAL VARIABLES:
+   volatile uint8_t ScrollFlags;   
+
    // PROTOTYPES:
    void LCD_puts_f(const char *FlashData);
    void LCD_puts(const char *Data);
@@ -44,5 +49,8 @@
    #if defined(INC_FROM_DRIVER)
      static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit);
    #endif
+};
+
+extern BF_LCD LCD;
 
 #endif 

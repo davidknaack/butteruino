@@ -20,14 +20,17 @@
 #define INC_FROM_DRIVER
 #include "LCD_Driver.h"
 
+//LCD instance set up for user
+BF_LCD LCD = BF_LCD();
+
 //                                  LCD Text            + Nulls for scrolling + Null Termination
 static volatile char     TextBuffer[LCD_TEXTBUFFER_SIZE + LCD_DISPLAY_SIZE    + 1] = {};
-static volatile uint8_t  StrStart        = 0;
-static volatile uint8_t  StrEnd          = 0;
-static volatile uint8_t  ScrollCount     = 0;
-static volatile uint8_t  UpdateDisplay   = false;
-static volatile uint8_t  ShowColons      = false;
-       volatile uint8_t  ScrollFlags     = 0;
+static volatile uint8_t  StrStart        		= 0;
+static volatile uint8_t  StrEnd          		= 0;
+static volatile uint8_t  ScrollCount     		= 0;
+static volatile uint8_t  UpdateDisplay   		= false;
+static volatile uint8_t  ShowColons      		= false;
+       volatile uint8_t  BF_LCD::ScrollFlags	= 0;
 
 const           uint16_t LCD_SegTable[] PROGMEM =
 {
@@ -90,12 +93,24 @@ const           uint16_t LCD_SegTable[] PROGMEM =
 // ======================================================================================
 
 /*
+ NAME:      | BF_LCD
+ PURPOSE:   | Constructs BF_LCD
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
+BF_LCD::BF_LCD( void )
+{
+	LCD_Init();
+}
+
+
+/*
  NAME:      | LCD_Init
  PURPOSE:   | Initializes the Butterfly's LCD for correct operation, ready to display data
  ARGUMENTS: | None
  RETURNS:   | None
 */
-void LCD_Init(void)
+void BF_LCD::LCD_Init(void)
 {
    // Set the initial contrast level to maximum:
    LCD_CONTRAST_LEVEL(0x0F);
@@ -116,7 +131,7 @@ void LCD_Init(void)
  ARGUMENTS: | Pointer to the start of the flash string
  RETURNS:   | None
 */
-void LCD_puts_f(const char *FlashData)
+void BF_LCD::LCD_puts_f(const char *FlashData)
 {
    /* Rather than create a new buffer here (wasting RAM), the TextBuffer global
       is re-used as a temp buffer. Once the ASCII data is loaded in to TextBuffer,
@@ -133,7 +148,7 @@ void LCD_puts_f(const char *FlashData)
  ARGUMENTS: | Pointer to the start of the SRAM string
  RETURNS:   | None
 */
-void LCD_puts(const char *Data)
+void BF_LCD::LCD_puts(const char *Data)
 {
    uint8_t LoadB       = 0;
    uint8_t CurrByte;
@@ -171,6 +186,47 @@ void LCD_puts(const char *Data)
 }
 
 /*
+ NAME:      | LCD_ShowColons
+ PURPOSE:   | Routine to turn on or off the LCD's colons
+ ARGUMENTS: | Boolean - true to turn on colons
+ RETURNS:   | None
+*/
+void BF_LCD::LCD_ShowColons(const uint8_t ColonsOn)
+{
+   ShowColons    = ColonsOn;
+   UpdateDisplay = true;
+} 
+
+/*
+ NAME:      | LCD_WriteChar (static, inline)
+ PURPOSE:   | Routine to write a character to the correct LCD registers for display
+ ARGUMENTS: | Character to display, LCD character number to display character on
+ RETURNS:   | None
+*/
+static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
+{
+   uint8_t* BuffPtr = (uint8_t*)(LCD_LCDREGS_START + (Digit >> 1));
+   uint16_t SegData = 0x0000;
+
+   if (Byte != LCD_SPACE_OR_INVALID_CHAR)              // Null indicates invalid character or space
+     SegData = pgm_read_word(&LCD_SegTable[Byte]);   
+
+   for (uint8_t BNib = 0; BNib < 4; BNib++)
+   {
+      uint8_t MaskedSegData = (SegData & 0x0000F);
+
+      if (Digit & 0x01)
+        *BuffPtr = ((*BuffPtr & 0x0F) | (MaskedSegData << 4));
+      else
+        *BuffPtr = ((*BuffPtr & 0xF0) | MaskedSegData);
+
+      BuffPtr += 5;
+      SegData >>= 4;
+   }   
+}
+
+
+/*
  NAME:      | LCD_vect (ISR, blocking)
  PURPOSE:   | ISR to handle the display and scrolling of the current display string onto the LCD
  ARGUMENTS: | None
@@ -178,7 +234,7 @@ void LCD_puts(const char *Data)
 */
 ISR(LCD_vect)
 {
-   if (ScrollFlags & LCD_FLAG_SCROLL)
+   if (LCD.ScrollFlags & LCD_FLAG_SCROLL)
    {
       if (!(ScrollCount--))
       {
@@ -213,43 +269,3 @@ ISR(LCD_vect)
       UpdateDisplay  = false;                         // Clear LCD management flags, LCD update is complete
    }
 }
-
-/*
- NAME:      | LCD_WriteChar (static, inline)
- PURPOSE:   | Routine to write a character to the correct LCD registers for display
- ARGUMENTS: | Character to display, LCD character number to display character on
- RETURNS:   | None
-*/
-static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
-{
-   uint8_t* BuffPtr = (uint8_t*)(LCD_LCDREGS_START + (Digit >> 1));
-   uint16_t SegData = 0x0000;
-
-   if (Byte != LCD_SPACE_OR_INVALID_CHAR)              // Null indicates invalid character or space
-     SegData = pgm_read_word(&LCD_SegTable[Byte]);   
-
-   for (uint8_t BNib = 0; BNib < 4; BNib++)
-   {
-      uint8_t MaskedSegData = (SegData & 0x0000F);
-
-      if (Digit & 0x01)
-        *BuffPtr = ((*BuffPtr & 0x0F) | (MaskedSegData << 4));
-      else
-        *BuffPtr = ((*BuffPtr & 0xF0) | MaskedSegData);
-
-      BuffPtr += 5;
-      SegData >>= 4;
-   }   
-}
-
-/*
- NAME:      | LCD_ShowColons
- PURPOSE:   | Routine to turn on or off the LCD's colons
- ARGUMENTS: | Boolean - true to turn on colons
- RETURNS:   | None
-*/
-void LCD_ShowColons(const uint8_t ColonsOn)
-{
-   ShowColons    = ColonsOn;
-   UpdateDisplay = true;
-} 
