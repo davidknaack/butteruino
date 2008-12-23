@@ -22,6 +22,10 @@ Joe Pardue of [http://smileymicros.com Smiley Micros] is a valuable Butterfly re
   * [http://www.siwawi.arubi.uni-kl.de/avr_projects/#avrprog_boot AVRPROG compatible bootloader for ATMEL ATmega Controllers] This may be useful for making the Butterfly Arduino experience a little smoother.
   * [http://www.siwawi.arubi.uni-kl.de/avr_projects/bf_logger/index.html A Butterfly-based data logger] possibly a source for inspiration and ideas.
 
+Dean Camera has made available a remarkable amount of very useful information and code:
+  * [http://www.fourwalledcubicle.com/AVRArticles.php AVR Articles]
+  * [http://www.fourwalledcubicle.com/CodeExperiments.php AVR Experiments]
+
 Arduino.cc Forums
   * [http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl The Arduino.cc forums]
   * [http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1222630663/0 A thread about using Arduino on the Butterfly]
