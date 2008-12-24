@@ -5,6 +5,8 @@
 
             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
+				  
+			Converted to Arduino library by DaveK
 */
 
 #ifndef LCDDRIVER_H
@@ -32,23 +34,26 @@
    #define LCD_FLAG_SCROLL            (1 << 0)
    #define LCD_FLAG_SCROLL_DONE       (1 << 1)   
 
-class BF_LCD 
+#include "Print.h"
+
+class BF_LCD : public Print
 {
 public:
-   BF_LCD( void );
-   
-   // EXTERNAL VARIABLES:
-   volatile uint8_t ScrollFlags;   
+	static volatile uint8_t ScrollFlags;   
 
-   // PROTOTYPES:
-   void LCD_puts_f(const char *FlashData);
-   void LCD_puts(const char *Data);
-   void LCD_Init(void);
-   void LCD_ShowColons(const uint8_t ColonsOn);
+	BF_LCD( void );
+	void prints_f(const char *FlashData);
+	void prints(const char *Data);
+	void appendc(char Data);
+	void clear(void);
+	void init(void);
+	void showColons(const uint8_t ColonsOn);
    
-   #if defined(INC_FROM_DRIVER)
-     static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit);
-   #endif
+	#if defined(INC_FROM_DRIVER)
+	static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit);
+	#endif
+	
+	virtual void write(uint8_t);
 };
 
 extern BF_LCD LCD;
