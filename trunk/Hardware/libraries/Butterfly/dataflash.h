@@ -24,27 +24,18 @@
 //
 //  YYYYMMDD - VER. - COMMENT                                       - SIGN.
 //
-//  20010117 - 0.10 - Generated file                                -  RM
+//  20010117 - 0.10 - Generated file                                - RM
 //  20031009          port to avr-gcc/avr-libc                      - M.Thomas
+//  20081228		  converted to Arduino Library for Butterfly	- Dave K
 //
 //*****************************************************************************
 
-#ifndef __DATAFLASH_INCLUDED
-#define __DATAFLASH_INCLUDED
-// mt #endif
-
-// #define MTEXTRAS
-
-//General macro definitions
-//changed to *DF for avr-libc compatiblity
-#define sbiDF(port,bit)	(port |=  (1<<bit))
-#define cbiDF(port,bit)	(port &= ~(1<<bit))
-//mtE
+#ifndef __DATAFLASH_H
+#define __DATAFLASH_H
 
 #define SetBit(x,y)		(x |= (y))
 #define ClrBit(x,y)		(x &=~(y))
 #define ChkBit(x,y)		(x  & (y))
-
 
 //Dataflash opcodes
 #define FlashPageRead				0x52	// Main memory page read
@@ -68,30 +59,34 @@
 #define Buf2ToFlash					0x89	// Buffer 2 to main memory page program without built-in erase
 #define PageErase					0x81	// Page erase, added by Martin Thomas
 
-//Pin definitions for interface to the Dataflash
+class BF_DataFlash
+{
+private:
+	void DF_SPI_init (void);
+	byte DF_SPI_RW (byte output);
 
+public:
+	BF_DataFlash(void);
+	
+	byte Read_DF_status (void);
+	void Activate(void);
+	void Deactivate(void);
 
-//Dataflash macro definitions
-#define DF_CS_active	cbiDF(PORTB,0)
-#define DF_CS_inactive	sbiDF(PORTB,0)
+	void Page_To_Buffer (unsigned int PageAdr, byte BufferNo);
+	void Buffer_To_Page (byte BufferNo, unsigned int PageAdr);
 
+	byte Buffer_Read_Byte (byte BufferNo, unsigned int IntPageAdr);
+	void Buffer_Read_Str (byte BufferNo, unsigned int IntPageAdr, unsigned int No_of_bytes, byte *BufferPtr);
 
-//Function definitions
-void DF_SPI_init (void);
-unsigned char DF_SPI_RW (unsigned char output);
-unsigned char Read_DF_status (void);
-void Page_To_Buffer (unsigned int PageAdr, unsigned char BufferNo);
-unsigned char Buffer_Read_Byte (unsigned char BufferNo, unsigned int IntPageAdr);
-void Buffer_Read_Str (unsigned char BufferNo, unsigned int IntPageAdr, unsigned int No_of_bytes, unsigned char *BufferPtr);
-void Buffer_Write_Enable (unsigned char BufferNo, unsigned int IntPageAdr);
-void Buffer_Write_Byte (unsigned char BufferNo, unsigned int IntPageAdr, unsigned char Data);
-void Buffer_Write_Str (unsigned char BufferNo, unsigned int IntPageAdr, unsigned int No_of_bytes, unsigned char *BufferPtr);
-void Buffer_To_Page (unsigned char BufferNo, unsigned int PageAdr);
-void Cont_Flash_Read_Enable (unsigned int PageAdr, unsigned int IntPageAdr);
-#ifdef MTEXTRAS
-void Page_Erase (unsigned int PageAdr); // added by mthomas
-unsigned char Page_Buffer_Compare(unsigned char BufferNo, unsigned int PageAdr); // added by mthomas
+	void Buffer_Write_Byte (byte BufferNo, unsigned int IntPageAdr, byte Data);
+	void Buffer_Write_Str (byte BufferNo, unsigned int IntPageAdr, unsigned int No_of_bytes, byte *BufferPtr);
+	void Buffer_Write_Enable (byte BufferNo, unsigned int IntPageAdr);
+
+	void Cont_Flash_Read_Enable (unsigned int PageAdr, unsigned int IntPageAdr);
+	void Page_Erase (unsigned int PageAdr);
+	byte Page_Buffer_Compare(byte BufferNo, unsigned int PageAdr);
+}
+
+extern BF_DataFlash dataFlash;
+
 #endif
-
-#endif
-// *****************************[ End Of DATAFLASH.H ]*****************************
