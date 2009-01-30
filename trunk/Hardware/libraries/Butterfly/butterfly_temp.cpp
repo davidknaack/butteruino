@@ -2,8 +2,45 @@
 #include "WProgram.h"
 #include "wiring.h"
 #include <avr/pgmspace.h>
-#include "tempslookup.h"
+//#include "tempslookup.h"
 
+
+// This table is from the AVR Butterfly sample from ATMEL
+// http://www.avrfreaks.net/index.php?name=PNphpBB2&file=viewtopic&p=397642#397642
+extern const prog_uint16_t PROGMEM TEMP_Fahrenheit_pos[];
+const prog_uint16_t TEMP_Fahrenheit_pos[] =  
+{ // Positive Fahrenheit temps (ADC-value) for 0 to 140 degrees F  
+938, 935, 932, 929, 926, 923, 920, 916, 913, 909, 906, 902, 898, 
+894, 891, 887, 882, 878, 874, 870, 865, 861, 856, 851, 847, 842, 
+837, 832, 827, 822, 816, 811, 806, 800, 795, 789, 783, 778, 772, 
+766, 760, 754, 748, 742, 735, 729, 723, 716, 710, 703, 697, 690, 
+684, 677, 670, 663, 657, 650, 643, 636, 629, 622, 616, 609, 602, 
+595, 588, 581, 574, 567, 560, 553, 546, 539, 533, 526, 519, 512, 
+505, 498, 492, 485, 478, 472, 465, 459, 452, 446, 439, 433, 426, 
+420, 414, 408, 402, 396, 390, 384, 378, 372, 366, 360, 355, 349, 
+344, 338, 333, 327, 322, 317, 312, 307, 302, 297, 292, 287, 282, 
+277, 273, 268, 264, 259, 255, 251, 246, 242, 238, 234, 230, 226, 
+222, 219, 215, 211, 207, 204, 200, 197, 194, 190, 187, 
+};
+
+// http://www.avrfreaks.net/index.php?name=PNphpBB2&file=viewtopic&p=397642#397642
+// This table is from the AVR Butterfly sample from ATMEL
+extern const prog_uint16_t PROGMEM TEMP_Celsius_pos[];
+const prog_uint16_t TEMP_Celsius_pos[] =    
+{ // Positive Celsius temps (ADC-value) for 0 to 60 degrees C
+806,796,786,775,765,754,743,732,720,709,697,685,673,661,649,
+636,624,611,599,586,574,562,549,537,524,512,500,488,476,464,
+452,440,429,418,406,396,385,374,364,354,344,334,324,315,306,
+297,288,279,271,263,255,247,240,233,225,219,212,205,199,193,
+187,
+};
+
+// http://www.avrfreaks.net/index.php?name=PNphpBB2&file=viewtopic&p=397642#397642
+extern const prog_uint16_t PROGMEM TEMP_Celsius_neg[];    
+const prog_uint16_t TEMP_Celsius_neg[] =    
+{  // Negative Celsius temps (ADC-value) from -1 to -15 degrees C
+815,825,834,843,851,860,868,876,883,891,898,904,911,917,923,
+};
 
 TempSensor::TempSensor(int units)
 {

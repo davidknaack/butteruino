@@ -15,7 +15,7 @@ void setup()
   delay( 3000 );
   
   // Set up the RTC timer to call the secTick() function every second.
-  Timer2RTC::init( secTick );
+  RTCTimer.init( secTick );
 }
 
 void secTick()

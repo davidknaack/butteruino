@@ -43,7 +43,7 @@ public:
 
 	BF_LCD( void );
 	void prints_f(const char *FlashData);
-	void prints(const char *Data);
+	void prints(const char Data[]);//const char *Data);
 	void appendc(char Data);
 	void clear(void);
 	void init(void);

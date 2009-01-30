@@ -4,9 +4,15 @@
 
 #include "timer2_RTC.h"
 
+// http://www.avrfreaks.net/index.php?name=PNphpBB2&file=viewtopic&p=397642#397642
 // Month length lookup table.
-char MonthLength[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+extern const char PROGMEM MonthLength[];
+const char MonthLength[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
+// An instance of the timer
+Timer2RTC RTCTimer = Timer2RTC();
+
+/*
 Timer2RTC::ClockChangeCallback_t Timer2RTC::clockChangeCallback;
 volatile uint8_t  Timer2RTC::timeChanged;
 volatile uint8_t  Timer2RTC::second;
@@ -15,9 +21,15 @@ volatile uint8_t  Timer2RTC::hour;
 volatile uint8_t  Timer2RTC::day;
 volatile uint8_t  Timer2RTC::month;
 volatile uint16_t Timer2RTC::year;
-
+*/
+	
 ISR(TIMER2_OVF_vect) {
-  Timer2RTC::timerTick();
+  RTCTimer.timerTick();
+}
+
+Timer2RTC::Timer2RTC( void )
+{
+	init(0);
 }
 
 void Timer2RTC::init( ClockChangeCallback_t userCallback )

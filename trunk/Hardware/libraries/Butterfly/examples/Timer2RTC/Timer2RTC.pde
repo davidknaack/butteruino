@@ -7,40 +7,38 @@ void setup()
   Serial.begin(9600); 
   Serial.println("Butterfly RTC Example");
 
-// Timer2RTC can be started with no 'tick' callback. In this
+// The RTCTimer can be started with no 'tick' callback. In this
 // case you must check regularly to see if the time has changed.
-// If you need to do something that takes more than a moment this
-// is a good way to do it. 
-//  Timer2RTC::init( 0 );  
+//  RTCTimer.init( 0 );  
 
-// Timer2RTC can also be started with a 'tick' callback. In this
+// The RTCTimer can also be started with a 'tick' callback. In this
 // case there is no need to check whether the time has changed,
-// Timer2RTC will call the routine you specify when the time changes.
-  Timer2RTC::init( secTick );
+// RTCTimer will call the routine you specify when the time changes.
+  RTCTimer.init( secTick );
 } 
 
 void secTick()
 {
   beep();
-  Serial.print(Timer2RTC::hour, DEC);
+  Serial.print(RTCTimer.hour, DEC);
   Serial.print(":");
-  Serial.print(Timer2RTC::minute, DEC);
+  Serial.print(RTCTimer.minute, DEC);
   Serial.print(":");
-  Serial.println(Timer2RTC::second, DEC);
+  Serial.println(RTCTimer.second, DEC);
 }
 
 void loop()
 {
   /*  
   // When you are not using the 'tick' callback, you may
-  // check the Timer2RTC::timeChanged variable to see if
+  // check the RTCTimer.timeChanged variable to see if
   // the time variables have been updated. Each time the
   // second timer ticks timeChanged will be updated. You
   // can reset timeChanged at any time, or you may leave
-  // it overflow when it reaches a value of 255.
-  if (Timer2RTC::timeChanged > 0){
+  // it to overflow when it reaches a value of 255.
+  if (RTCTimer.timeChanged > 0){
     secTick();
-    Timer2RTC::timeChanged = 0;
+    RTCTimer.timeChanged = 0;
   }
   //*/
 }

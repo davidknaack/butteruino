@@ -26,6 +26,7 @@ public:
 	void BufferToPage (uint8_t BufferNo, uint16_t PageAdr);
 	void PageToBuffer (uint16_t PageAdr, uint8_t BufferNo);
 
+	void ContFlashReadEnable (uint16_t PageAdr, uint16_t IntPageAdr);
 	void BufferReadEnable (uint8_t BufferNo, uint16_t IntPageAdr);
 	uint8_t BufferReadByte (uint8_t BufferNo, uint16_t IntPageAdr);
 	void BufferReadStr (uint8_t BufferNo, uint16_t IntPageAdr, uint16_t No_of_uint8_ts, uint8_t *BufferPtr);
@@ -36,7 +37,6 @@ public:
 	void BufferWriteStr (uint8_t BufferNo, uint16_t IntPageAdr, uint16_t No_of_uint8_ts, uint8_t *BufferPtr);
 	void WriteNextByte (uint8_t data);
 
-	void ContFlashReadEnable (uint16_t PageAdr, uint16_t IntPageAdr);
 	uint8_t PageBufferCompare(uint8_t BufferNo, uint16_t PageAdr);
 	void PageErase (uint16_t PageAdr);
 };
