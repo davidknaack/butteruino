@@ -16,22 +16,27 @@
 
 #ifndef timer2_RTC_h
 #define timer2_RTC_h
+#include <avr/pgmspace.h>
 #include <stdint.h>
 
-namespace Timer2RTC {
+class Timer2RTC {
+public:
 	typedef void (*ClockChangeCallback_t) ();
 
-	extern ClockChangeCallback_t clockChangeCallback;
-	extern volatile uint8_t  timeChanged;
-	extern volatile uint8_t  second;
-	extern volatile uint8_t  minute;
-	extern volatile uint8_t  hour;
-	extern volatile uint8_t  day;
-	extern volatile uint8_t  month;
-	extern volatile uint16_t year;
+	ClockChangeCallback_t clockChangeCallback;
+	volatile uint8_t  timeChanged;
+	volatile uint8_t  second;
+	volatile uint8_t  minute;
+	volatile uint8_t  hour;
+	volatile uint8_t  day;
+	volatile uint8_t  month;
+	volatile uint16_t year;
 
+	Timer2RTC( void );
 	void init( ClockChangeCallback_t clockChangeCallback );
 	void timerTick();
-}
+};
+
+extern Timer2RTC RTCTimer;
 
 #endif
