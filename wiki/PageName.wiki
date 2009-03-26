@@ -33,3 +33,7 @@ Arduino.cc Forums
 
 AVR Freaks:
   * [http://www.avrfreaks.net/index.php?name=PNphpBB2&file=viewtopic&t=42846 Dataflash] Details about how the dataflash on the butterfly works.
+
+Brokentoaster.com
+ * [http://brokentoaster.com/butterflylogger/ AVR Butterfly Logger] AVR Butterfly based Data logger
+ * [http://brokentoaster.com/butterflymp3/ AVR ButterflyMP3] AVR Butterfly based MP3 Player 
