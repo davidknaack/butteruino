@@ -25,17 +25,40 @@
 #include "wiring_private.h"
 #include "osccal.h"
 
-volatile unsigned long timer0_clock_cycles = 0;
-volatile unsigned long timer0_millis = 0;
+// the prescaler is set so that timer0 ticks every 64 clock cycles, and the
+// the overflow handler is called every 256 ticks.
+#define MICROSECONDS_PER_TIMER0_OVERFLOW (clockCyclesToMicroseconds(64 * 256))
 
-SIGNAL(SIG_OVERFLOW0)
+// the whole number of milliseconds per timer0 overflow
+#define MILLIS_INC (MICROSECONDS_PER_TIMER0_OVERFLOW / 1000)
+
+// the fractional number of milliseconds per timer0 overflow. we shift right
+// by three to fit these numbers into a byte. (for the clock speeds we care
+// about - 8 and 16 MHz - this doesn't lose precision.)
+#define FRACT_INC ((MICROSECONDS_PER_TIMER0_OVERFLOW % 1000) >> 3)
+#define FRACT_MAX (1000 >> 3)
+
+volatile unsigned long timer0_overflow_count = 0;
+volatile unsigned long timer0_millis = 0;
+static unsigned char timer0_fract = 0;
+
+SIGNAL(TIMER0_OVF_vect)
 {
-	// timer 0 prescale factor is 64 and the timer overflows at 256
-	timer0_clock_cycles += 64UL * 256UL;
-	while (timer0_clock_cycles > clockCyclesPerMicrosecond() * 1000UL) {
-		timer0_clock_cycles -= clockCyclesPerMicrosecond() * 1000UL;
-		timer0_millis++;
+	// copy these to local variables so they can be stored in registers
+	// (volatile variables must be read from memory on every access)
+	unsigned long m = timer0_millis;
+	unsigned char f = timer0_fract;
+
+	m += MILLIS_INC;
+	f += FRACT_INC;
+	if (f >= FRACT_MAX) {
+		f -= FRACT_MAX;
+		m += 1;
 	}
+
+	timer0_fract = f;
+	timer0_millis = m;
+	timer0_overflow_count++;
 }
 
 unsigned long millis()
@@ -52,21 +75,49 @@ unsigned long millis()
 	return m;
 }
 
-void delay(unsigned long ms)
-{
-	unsigned long start = millis();
+unsigned long micros() {
+	unsigned long m;
+	uint8_t oldSREG = SREG, t;
 	
-	while (millis() - start <= ms)
-		;
+	cli();
+	m = timer0_overflow_count;
+#if defined(TCNT0)
+	t = TCNT0;
+#elif defined(TCNT0L)
+	t = TCNT0L;
+#else
+	#error TIMER 0 not defined
+#endif
+
+  
+#ifdef TIFR0
+	if ((TIFR0 & _BV(TOV0)) && (t < 255))
+		m++;
+#else
+	if ((TIFR & _BV(TOV0)) && (t < 255))
+		m++;
+#endif
+
+	SREG = oldSREG;
+	
+	return ((m << 8) + t) * (64 / clockCyclesPerMicrosecond());
 }
 
-/* Delay for the given number of microseconds.  Assumes a 8 or 16 MHz clock. 
- * Disables interrupts, which will disrupt the millis() function if used
- * too frequently. */
+void delay(unsigned long ms)
+{
+	uint16_t start = (uint16_t)micros();
+
+	while (ms > 0) {
+		if (((uint16_t)micros() - start) >= 1000) {
+			ms--;
+			start += 1000;
+		}
+	}
+}
+
+/* Delay for the given number of microseconds.  Assumes a 8 or 16 MHz clock. */
 void delayMicroseconds(unsigned int us)
 {
-	uint8_t oldSREG;
-
 	// calling avrlib's delay_us() function with low values (e.g. 1 or
 	// 2 microseconds) gives delays longer than desired.
 	//delay_us(us);
@@ -107,19 +158,11 @@ void delayMicroseconds(unsigned int us)
 	us--;
 #endif
 
-	// disable interrupts, otherwise the timer 0 overflow interrupt that
-	// tracks milliseconds will make us delay longer than we want.
-	oldSREG = SREG;
-	cli();
-
 	// busy wait
 	__asm__ __volatile__ (
 		"1: sbiw %0,1" "\n\t" // 2 cycles
 		"brne 1b" : "=w" (us) : "0" (us) // 2 cycles
 	);
-
-	// reenable interrupts.
-	SREG = oldSREG;
 }
 
 void CLKPR_Calibrate(void)

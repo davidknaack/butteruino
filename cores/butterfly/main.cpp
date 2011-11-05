@@ -1,3 +1,5 @@
+#include <WProgram.h>
+
 int main(void)
 {
 	init();
@@ -9,4 +11,3 @@ int main(void)
         
 	return 0;
 }
-
