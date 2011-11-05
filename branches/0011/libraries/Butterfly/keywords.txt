@@ -1,0 +1,29 @@
+#######################################
+# Syntax Coloring Map For TempSensor
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+TempSensor	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+getTemp	KEYWORD2
+overSample	KEYWORD2
+units	KEYWORD2
+
+######################################
+# Instances (KEYWORD2)
+#######################################
+
+TempSense	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+CELSIUS	LITERAL1
+FAHRENHEIT	LITERAL1
